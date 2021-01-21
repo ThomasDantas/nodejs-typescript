@@ -1,2 +1,2 @@
-# nodejs-typescript
+# typescript
 Testes com typescript no backend
