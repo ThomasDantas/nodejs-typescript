@@ -1,22 +1,23 @@
 import jwt, { JwtPayload } from 'jsonwebtoken'
 
 export type TokenGenerator = {
-  secret?: string,
   key: string
-  expirationInHour: string
 }
 export type TokenValidator = { secret?: string, token: string }
 
 export type Output = string
 
 export class JwtTokenHandler {
-  constructor (
-    private readonly secret: string
-  ) { }
+  private readonly secret: string
+  private readonly expirationInHour: string
 
-  async generate ({ expirationInHour, key }: TokenGenerator): Promise<Output> {
-    const expirationInSeconds = expirationInHour
-    return jwt.sign({ key }, this.secret, { expiresIn: expirationInSeconds })
+  constructor ({ secret, expirationInHour }: { secret: string, expirationInHour: string }) {
+    this.secret = secret
+    this.expirationInHour = expirationInHour
+  }
+
+  async generate ({ key }: TokenGenerator): Promise<Output> {
+    return jwt.sign({ key }, this.secret, { expiresIn: this.expirationInHour })
   }
 
   async validate ({ token }: TokenValidator): Promise<Output> {

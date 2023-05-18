@@ -6,25 +6,25 @@ import { JwtTokenHandler } from '@/infra/gateways'
 type HttpRequest = {
   authorization: string
 }
-type Model = Error | any
+type Model = Error | { nome: string }
 
-export class AuthenticationMiddleware {
+export class AuthenticationUserMiddleware {
   constructor (
     private readonly jwtTokenHandler: JwtTokenHandler
   ) { }
 
-  async handle ({ authorization }: HttpRequest): Promise<HttpResponse<Model>> {
-    if (!this.validate({ authorization })) return forbidden()
+  async perform ({ authorization }: HttpRequest): Promise<HttpResponse<Model>> {
+    if (this.validate({ authorization })) return forbidden()
     try {
-      const token = await this.jwtTokenHandler.validate({ token: authorization })
-      return ok(token)
+      const data = await this.jwtTokenHandler.validate({ token: authorization })
+      return ok({ nome: data })
     } catch {
       return forbidden()
     }
   }
 
   private validate({ authorization }: HttpRequest): Error | undefined {
-    if (authorization !== undefined || authorization === '') {
+    if (authorization === undefined || authorization === '') {
       return new RequiredFieldError(authorization)
     }
   }
