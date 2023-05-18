@@ -13,19 +13,22 @@ const users = [
 
 type Model = Error | { user: string, email: string}[]
 
-export default {
+export class UserController {
+  constructor() {}
+
   async get(): Promise<HttpResponse<Model>> {
     try {
       return ok(users);
     } catch (err: any) {
      return badRequest(err)
     }
-  },
+  }
+
   async create(): Promise<HttpResponse<Model>> {
     try {
       return ok(users);
     } catch (err: any) {
      return badRequest(err)
     }
-  },
-};
+  }
+}

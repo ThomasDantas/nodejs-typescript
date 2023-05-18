@@ -2,7 +2,8 @@ import { AuthenticationMiddleware } from '@/application/middlewares'
 import { JwtTokenHandler } from '@/infra/gateways'
 import { env } from '@/main/config'
 
-export const makeAuthenticationMiddleware = (): AuthenticationMiddleware => {
+export const makeAuthenticationMiddleware = (authorization: string): any => {
   const jwt = new JwtTokenHandler(env.jwtSecret)
-  return new AuthenticationMiddleware(jwt.validate.bind(jwt))
+  const auth = new AuthenticationMiddleware(jwt)
+  return auth.handle({ authorization })
 }

@@ -1,20 +1,23 @@
 import { forbidden, ok } from '@/application/helpers/http'
 import { HttpResponse } from '@/application/helpers'
 import { RequiredFieldError } from '@/application/errors'
+import { JwtTokenHandler } from '@/infra/gateways'
 
 type HttpRequest = {
   authorization: string
 }
-type Model = Error | { userId: string }
-type Authorize = (params: { token: string }) => Promise<string>
+type Model = Error | any
+
 export class AuthenticationMiddleware {
-  constructor (private readonly authorize: Authorize) {}
+  constructor (
+    private readonly jwtTokenHandler: JwtTokenHandler
+  ) { }
 
   async handle ({ authorization }: HttpRequest): Promise<HttpResponse<Model>> {
     if (!this.validate({ authorization })) return forbidden()
     try {
-      const userId = await this.authorize({ token: authorization })
-      return ok({ userId })
+      const token = await this.jwtTokenHandler.validate({ token: authorization })
+      return ok(token)
     } catch {
       return forbidden()
     }
