@@ -1,28 +1,21 @@
 import { badRequest, HttpResponse, ok } from '@/application/helpers'
-
-const users = [
-  {
-    user: 'Teste',
-    email: 'teste@gmail.com',
-  },
-  {
-    user: 'Teste2',
-    email: 'teste1@gmail.com',
-  },
-];
+import { GetDataUser } from '@/domain/use-cases/user/get-user';
+import { Controller } from '@/application/controllers/controller';
 
 type Input = { nome: string, acao: string }
-type Model = Error | { nome: string }
+type Model = Error | { nome: string, acao: string }
 
-export class GetUserController {
-  constructor() {
+export class GetUserController extends Controller {
+  constructor (private readonly data: GetDataUser) { 
+    super()
   }
 
   async perform({ nome, acao }: Input): Promise<HttpResponse<Model>> {
     try {
-      return ok({ nome, acao });
-    } catch (err: any) {
-     return badRequest(err)
+      const data = await this.data({ nome, acao })
+      return ok(data);
+    } catch (e: any) {
+      return badRequest(e)
     }
   }
 }

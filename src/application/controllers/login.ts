@@ -1,13 +1,13 @@
-import { HttpResponse, ok, badRequest, serverError } from '@/application/helpers'
+import { HttpResponse, ok, badRequest } from '@/application/helpers'
 import { RequiredFieldError } from '@/application/errors';
-import { CreateUser } from '@/domain/use-cases/user/create-user';
+import { Login } from '@/domain/use-cases/login';
 import { Controller } from '@/application/controllers/controller';
 
 type Input = { nome: string }
-type Model = Error | { accessToken: string }
+type Model = Error | { nome: string }
 
-export class CreateUserController extends Controller {
-  constructor (private readonly create: CreateUser) { 
+export class LoginController extends Controller {
+  constructor (private readonly data: Login) { 
     super()
   }
 
@@ -15,8 +15,8 @@ export class CreateUserController extends Controller {
     const error = this.validate({ nome })
     if (error) return badRequest(error)
     try {
-      const accessToken = await this.create({ nome })
-      return ok(accessToken);
+      const data = await this.data({ nome })
+      return ok(data);
     } catch (e: any) {
       return badRequest(e)
     }

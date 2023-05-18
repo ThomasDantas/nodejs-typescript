@@ -1,6 +1,8 @@
+import { Controller } from '@/application/controllers/controller'
+
 import { RequestHandler } from 'express'
 
-type Adapter = (controller: any) => RequestHandler
+type Adapter = (controller: Controller) => RequestHandler
 
 export const adaptExpressRoute: Adapter = controller => async (req, res) => {
   const { statusCode, data } = await controller.perform({ ...req.body, ...req.locals })
